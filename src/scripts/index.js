@@ -1,3 +1,7 @@
+// Импорт стилей
+import '../pages/index.css';
+// Импорт исходного массива карточек
+import initialCards from './cards';
 // Темплейт карточки
 const cardTemplate = document.querySelector("#card-template").content;
 // DOM узлы
