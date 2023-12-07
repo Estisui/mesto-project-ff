@@ -5,10 +5,17 @@ import initialCards from "./cards";
 // Темплейт карточки
 const cardTemplate = document.querySelector("#card-template").content;
 // DOM узлы
-const page = document.querySelector(".page");
+const profileTitle = document.querySelector(".profile__title");
+const profileDescription = document.querySelector(".profile__description");
+
 const cardsContainer = document.querySelector(".places__list");
 
 const popupEdit = document.querySelector(".popup_type_edit");
+const popupEditForm = document.querySelector(".popup__form");
+const popupEditName = document.querySelector(".popup__input_type_name");
+const popupEditDescription = document.querySelector(
+  ".popup__input_type_description"
+);
 const buttonEdit = document.querySelector(".profile__edit-button");
 const buttonEditClose = popupEdit.querySelector(".popup__close");
 
@@ -29,7 +36,9 @@ const createCard = (cardData, onDelete, onModalOpen) => {
   const cardImage = cardElement.querySelector(".card__image");
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
-  cardImage.addEventListener("click", () => onModalOpen(popupImage, cardData));
+  cardImage.addEventListener("click", () =>
+    onModalOpen(popupImage, { ...cardData, type: "image" })
+  );
   cardElement.querySelector(".card__title").textContent = cardData.name;
   cardElement
     .querySelector(".card__delete-button")
@@ -41,18 +50,26 @@ const onDelete = (card) => {
   card.remove();
 };
 // Функция показа popup
-const onModalOpen = (modal, cardData = null) => {
+const onModalOpen = (modal, modalData = null) => {
   modal.classList.add("popup_is-opened");
-  document.addEventListener('keydown', onEscape);
-  if (cardData) {
-    popupImageItem.src = cardData.link;
-    popupImageItem.alt = cardData.name;
-    popupTextItem.textContent = cardData.name;
+  document.addEventListener("keydown", keyboardHandler);
+  if (modalData) {
+    switch (modalData.type) {
+      case "image":
+        popupImageItem.src = modalData.link;
+        popupImageItem.alt = modalData.name;
+        popupTextItem.textContent = modalData.name;
+        break;
+      case "edit":
+        popupEditName.value = modalData.name;
+        popupEditDescription.value = modalData.description;
+        break;
+    }
   }
 };
 // Функция закрытия popup
 const onModalClose = (modal) => {
-  document.removeEventListener('keydown', onEscape);
+  document.removeEventListener("keydown", keyboardHandler);
   modal.classList.remove("popup_is-opened");
   if (modal.classList.contains("popup_type_image")) {
     popupImageItem.src = "";
@@ -60,29 +77,46 @@ const onModalClose = (modal) => {
     popupTextItem.textContent = "";
   }
 };
-// Функция закрытия popup через крестик
-const onButtonClose = (evt) => {
-  onModalClose(evt.target.closest('.popup'));
-}
-// Функция закрытия popup через оверлей
-const onModalOverlay = (evt) => {
-  if (evt.target.classList.contains('popup')) {
+// Обработчик закрытия popup через крестик
+const modalCloseHandler = (evt) => {
+  onModalClose(evt.target.closest(".popup"));
+};
+// Обработчик закрытия popup через оверлей
+const modalOverlayHandler = (evt) => {
+  if (evt.target.classList.contains("popup")) {
     onModalClose(evt.target);
   }
-}
-// Функция закрытия popup через 'Esc' 
-const onEscape = (evt) => {
-  if (evt.key === 'Escape') {
-    onModalClose(document.querySelector('.popup_is-opened'));
+};
+// Обработчик закрытия popup через 'Esc'
+const keyboardHandler = (evt) => {
+  if (evt.key === "Escape") {
+    onModalClose(document.querySelector(".popup_is-opened"));
   }
-}
+};
+// Обработчик формы
+const editSubmitHandler = (evt) => {
+  evt.preventDefault();
+  profileTitle.textContent = popupEditName.value;
+  profileDescription.textContent = popupEditDescription.value;
+  onModalClose(popupEdit);
+};
 // Вывести карточки на страницу
 initialCards.forEach((card) => {
   cardsContainer.append(createCard(card, onDelete, onModalOpen));
 });
 // Добавление слушателей для открытия попапов
-buttonEdit.addEventListener("click", () => onModalOpen(popupEdit));
+buttonEdit.addEventListener("click", () =>
+  onModalOpen(popupEdit, {
+    type: "edit",
+    name: profileTitle.textContent,
+    description: profileDescription.textContent,
+  })
+);
 buttonNewCard.addEventListener("click", () => onModalOpen(popupNewCard));
 // Добавление слушателей для закрытия попапов
-buttonsClose.forEach((button) => button.addEventListener("click", onButtonClose));
-popups.forEach((popup) => popup.addEventListener("click", onModalOverlay));
+buttonsClose.forEach((button) =>
+  button.addEventListener("click", modalCloseHandler)
+);
+popups.forEach((popup) => popup.addEventListener("click", modalOverlayHandler));
+// Добавления обработчиков форм
+popupEditForm.addEventListener("submit", editSubmitHandler);
