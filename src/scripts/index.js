@@ -32,9 +32,10 @@ const buttonImageClose = popupImage.querySelector(".popup__close");
 const popups = [popupEdit, popupNewCard, popupImage];
 const buttonsClose = [buttonEditClose, buttonNewCardClose, buttonImageClose];
 // Функция создания карточки
-const createCard = (cardData, onDelete, onModalOpen) => {
+const createCard = (cardData, onLike, onDelete, onModalOpen) => {
   const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
   const cardImage = cardElement.querySelector(".card__image");
+  const cardLikeButton = cardElement.querySelector(".card__like-button");
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
   cardImage.addEventListener("click", () =>
@@ -44,11 +45,16 @@ const createCard = (cardData, onDelete, onModalOpen) => {
   cardElement
     .querySelector(".card__delete-button")
     .addEventListener("click", () => onDelete(cardElement));
+  cardLikeButton.addEventListener("click", () => onLike(cardLikeButton));
   return cardElement;
 };
 // Функция удаления карточки
 const onDelete = (card) => {
   card.remove();
+};
+// Функция лайка карточки
+const onLike = (likeButton) => {
+  likeButton.classList.toggle("card__like-button_is-active");
 };
 // Функция показа popup
 const onModalOpen = (modal, modalData = null) => {
@@ -107,6 +113,7 @@ const newCardSubmitHandler = (evt) => {
   evt.preventDefault();
   const newCard = createCard(
     { name: popupNewCardName.value, link: popupNewCardLink.value },
+    onLike,
     onDelete,
     onModalOpen
   );
@@ -116,7 +123,7 @@ const newCardSubmitHandler = (evt) => {
 };
 // Вывести карточки на страницу
 initialCards.forEach((card) => {
-  cardsContainer.append(createCard(card, onDelete, onModalOpen));
+  cardsContainer.append(createCard(card, onLike, onDelete, onModalOpen));
 });
 // Добавление слушателей для открытия попапов
 buttonEdit.addEventListener("click", () =>
