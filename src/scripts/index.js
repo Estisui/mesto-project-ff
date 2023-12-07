@@ -59,16 +59,16 @@ const newCardSubmitHandler = (evt) => {
 
 // Обработчик открытия модального окна для редактирования профиля
 const popupEditOpenHandler = () => {
-  popupEditName.value = profileTitle.textContent,
-  popupEditDescription.value = profileDescription.textContent,
+  popupEditName.value = profileTitle.textContent;
+  popupEditDescription.value = profileDescription.textContent;
   onModalOpen(popupEdit);
 };
 
 // Обработчик открытия модального окна изображения карточки
 const popupImageOpenHandler = (evt) => {
-  const card = evt.target.closest('.card');
-  const imageItem = card.querySelector('.card__image');
-  const textItem = card.querySelector('.card__title');
+  const card = evt.target.closest(".card");
+  const imageItem = card.querySelector(".card__image");
+  const textItem = card.querySelector(".card__title");
   popupImageItem.src = imageItem.src;
   popupImageItem.alt = imageItem.alt;
   popupTextItem.textContent = textItem.textContent;
