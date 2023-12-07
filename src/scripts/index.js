@@ -2,6 +2,9 @@
 import "../pages/index.css";
 // Импорт исходного массива карточек
 import initialCards from "./cards";
+// Импорт модулей
+import { createCard, onDelete, onLike } from './card';
+import { onModalOpen, onModalClose } from "./modal";
 // Темплейт карточки
 const cardTemplate = document.querySelector("#card-template").content;
 // DOM узлы
@@ -25,65 +28,10 @@ const buttonNewCard = document.querySelector(".profile__add-button");
 const buttonNewCardClose = popupNewCard.querySelector(".popup__close");
 
 const popupImage = document.querySelector(".popup_type_image");
-const popupImageItem = popupImage.querySelector(".popup__image");
-const popupTextItem = popupImage.querySelector(".popup__caption");
 const buttonImageClose = popupImage.querySelector(".popup__close");
 
 const popups = [popupEdit, popupNewCard, popupImage];
 const buttonsClose = [buttonEditClose, buttonNewCardClose, buttonImageClose];
-// Функция создания карточки
-const createCard = (cardData, onLike, onDelete, onModalOpen) => {
-  const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
-  const cardImage = cardElement.querySelector(".card__image");
-  const cardLikeButton = cardElement.querySelector(".card__like-button");
-  cardImage.src = cardData.link;
-  cardImage.alt = cardData.name;
-  cardImage.addEventListener("click", () =>
-    onModalOpen(popupImage, { ...cardData, type: "image" })
-  );
-  cardElement.querySelector(".card__title").textContent = cardData.name;
-  cardElement
-    .querySelector(".card__delete-button")
-    .addEventListener("click", () => onDelete(cardElement));
-  cardLikeButton.addEventListener("click", () => onLike(cardLikeButton));
-  return cardElement;
-};
-// Функция удаления карточки
-const onDelete = (card) => {
-  card.remove();
-};
-// Функция лайка карточки
-const onLike = (likeButton) => {
-  likeButton.classList.toggle("card__like-button_is-active");
-};
-// Функция показа popup
-const onModalOpen = (modal, modalData = null) => {
-  modal.classList.add("popup_is-opened");
-  document.addEventListener("keydown", keyboardHandler);
-  if (modalData) {
-    switch (modalData.type) {
-      case "image":
-        popupImageItem.src = modalData.link;
-        popupImageItem.alt = modalData.name;
-        popupTextItem.textContent = modalData.name;
-        break;
-      case "edit":
-        popupEditName.value = modalData.name;
-        popupEditDescription.value = modalData.description;
-        break;
-    }
-  }
-};
-// Функция закрытия popup
-const onModalClose = (modal) => {
-  document.removeEventListener("keydown", keyboardHandler);
-  modal.classList.remove("popup_is-opened");
-  if (modal.classList.contains("popup_type_image")) {
-    popupImageItem.src = "";
-    popupImageItem.alt = "";
-    popupTextItem.textContent = "";
-  }
-};
 // Обработчик закрытия popup через крестик
 const modalCloseHandler = (evt) => {
   onModalClose(evt.target.closest(".popup"));
@@ -92,12 +40,6 @@ const modalCloseHandler = (evt) => {
 const modalOverlayHandler = (evt) => {
   if (evt.target.classList.contains("popup")) {
     onModalClose(evt.target);
-  }
-};
-// Обработчик закрытия popup через 'Esc'
-const keyboardHandler = (evt) => {
-  if (evt.key === "Escape") {
-    onModalClose(document.querySelector(".popup_is-opened"));
   }
 };
 // Обработчик формы редактирования профиля
@@ -112,6 +54,8 @@ const editSubmitHandler = (evt) => {
 const newCardSubmitHandler = (evt) => {
   evt.preventDefault();
   const newCard = createCard(
+    cardTemplate,
+    popupImage,
     { name: popupNewCardName.value, link: popupNewCardLink.value },
     onLike,
     onDelete,
@@ -123,7 +67,7 @@ const newCardSubmitHandler = (evt) => {
 };
 // Вывести карточки на страницу
 initialCards.forEach((card) => {
-  cardsContainer.append(createCard(card, onLike, onDelete, onModalOpen));
+  cardsContainer.append(createCard(cardTemplate, popupImage, card, onLike, onDelete, onModalOpen));
 });
 // Добавление слушателей для открытия попапов
 buttonEdit.addEventListener("click", () =>
