@@ -1,42 +1,37 @@
-// DOM узлы
-const popupEditForm = document.forms["edit-profile"];
-const popupEditName = popupEditForm.name;
-const popupEditDescription = popupEditForm.description;
-const popupImage = document.querySelector(".popup_type_image");
-const popupImageItem = popupImage.querySelector(".popup__image");
-const popupTextItem = popupImage.querySelector(".popup__caption");
 // Функция открытия popup
-const onModalOpen = (modal, modalData = null) => {
+const onModalOpen = (modal) => {
+  const closeButton = modal.querySelector(".popup__close");
   modal.classList.add("popup_is-opened");
+  closeButton.addEventListener("click", modalCloseHandler);
   document.addEventListener("keydown", keyboardHandler);
-  if (modalData) {
-    switch (modalData.type) {
-      case "image":
-        popupImageItem.src = modalData.link;
-        popupImageItem.alt = modalData.name;
-        popupTextItem.textContent = modalData.name;
-        break;
-      case "edit":
-        popupEditName.value = modalData.name;
-        popupEditDescription.value = modalData.description;
-        break;
-    }
-  }
+  modal.addEventListener("click", modalOverlayHandler);
 };
+
 // Функция закрытия popup
 const onModalClose = (modal) => {
+  const closeButton = modal.querySelector(".popup__close");
+  modal.removeEventListener("click", modalOverlayHandler);
   document.removeEventListener("keydown", keyboardHandler);
+  closeButton.addEventListener("click", modalCloseHandler);
   modal.classList.remove("popup_is-opened");
-  if (modal.classList.contains("popup_type_image")) {
-    popupImageItem.src = "";
-    popupImageItem.alt = "";
-    popupTextItem.textContent = "";
-  }
 };
+
+// Обработчик закрытия popup через крестик
+const modalCloseHandler = (evt) => {
+  onModalClose(evt.target.closest(".popup"));
+};
+
 // Обработчик закрытия popup через 'Esc'
 const keyboardHandler = (evt) => {
   if (evt.key === "Escape") {
     onModalClose(document.querySelector(".popup_is-opened"));
+  }
+};
+
+// Обработчик закрытия popup через оверлей
+const modalOverlayHandler = (evt) => {
+  if (evt.target.classList.contains("popup")) {
+    onModalClose(evt.target);
   }
 };
 

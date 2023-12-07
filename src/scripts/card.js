@@ -1,13 +1,11 @@
 // Функция создания карточки
-const createCard = (cardTemplate, popupImage, cardData, onLike, onDelete, onModalOpen) => {
+const createCard = (cardTemplate, cardData, onLike, onDelete, onOpen) => {
   const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
   const cardImage = cardElement.querySelector(".card__image");
   const cardLikeButton = cardElement.querySelector(".card__like-button");
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
-  cardImage.addEventListener("click", () =>
-    onModalOpen(popupImage, { ...cardData, type: "image" })
-  );
+  cardImage.addEventListener("click", onOpen);
   cardElement.querySelector(".card__title").textContent = cardData.name;
   cardElement
     .querySelector(".card__delete-button")
