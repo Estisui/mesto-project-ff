@@ -11,15 +11,16 @@ const profileDescription = document.querySelector(".profile__description");
 const cardsContainer = document.querySelector(".places__list");
 
 const popupEdit = document.querySelector(".popup_type_edit");
-const popupEditForm = document.querySelector(".popup__form");
-const popupEditName = document.querySelector(".popup__input_type_name");
-const popupEditDescription = document.querySelector(
-  ".popup__input_type_description"
-);
+const popupEditForm = document.forms["edit-profile"];
+const popupEditName = popupEditForm.name;
+const popupEditDescription = popupEditForm.description;
 const buttonEdit = document.querySelector(".profile__edit-button");
 const buttonEditClose = popupEdit.querySelector(".popup__close");
 
 const popupNewCard = document.querySelector(".popup_type_new-card");
+const popupNewCardForm = document.forms["new-place"];
+const popupNewCardName = popupNewCardForm["place-name"];
+const popupNewCardLink = popupNewCardForm.link;
 const buttonNewCard = document.querySelector(".profile__add-button");
 const buttonNewCardClose = popupNewCard.querySelector(".popup__close");
 
@@ -93,12 +94,25 @@ const keyboardHandler = (evt) => {
     onModalClose(document.querySelector(".popup_is-opened"));
   }
 };
-// Обработчик формы
+// Обработчик формы редактирования профиля
 const editSubmitHandler = (evt) => {
   evt.preventDefault();
   profileTitle.textContent = popupEditName.value;
   profileDescription.textContent = popupEditDescription.value;
+  popupEditForm.reset();
   onModalClose(popupEdit);
+};
+// Обработчик формы добавления карточки
+const newCardSubmitHandler = (evt) => {
+  evt.preventDefault();
+  const newCard = createCard(
+    { name: popupNewCardName.value, link: popupNewCardLink.value },
+    onDelete,
+    onModalOpen
+  );
+  cardsContainer.prepend(newCard);
+  popupNewCardForm.reset();
+  onModalClose(popupNewCard);
 };
 // Вывести карточки на страницу
 initialCards.forEach((card) => {
@@ -120,3 +134,4 @@ buttonsClose.forEach((button) =>
 popups.forEach((popup) => popup.addEventListener("click", modalOverlayHandler));
 // Добавления обработчиков форм
 popupEditForm.addEventListener("submit", editSubmitHandler);
+popupNewCardForm.addEventListener("submit", newCardSubmitHandler);
