@@ -6,7 +6,12 @@ import initialCards from "./cards";
 
 // Импорт модулей
 import { createCard, onDelete, onLike } from "./card";
-import { onModalOpen, onModalClose } from "./modal";
+import {
+  onModalOpen,
+  onModalClose,
+  modalCloseHandler,
+  modalOverlayHandler,
+} from "./modal";
 
 // Темплейт карточки
 const cardTemplate = document.querySelector("#card-template").content;
@@ -30,8 +35,11 @@ const popupNewCardLink = popupNewCardForm.link;
 const buttonNewCard = document.querySelector(".profile__add-button");
 
 const popupImage = document.querySelector(".popup_type_image");
-const popupImageItem = popupImage.querySelector(".popup__image");
-const popupTextItem = popupImage.querySelector(".popup__caption");
+const popupImagePhoto = popupImage.querySelector(".popup__image");
+const popupImageCaption = popupImage.querySelector(".popup__caption");
+
+const popups = document.querySelectorAll(".popup");
+const popupCloseButtons = document.querySelectorAll(".popup__close");
 
 // Обработчик формы редактирования профиля
 const editSubmitHandler = (evt) => {
@@ -69,9 +77,9 @@ const popupImageOpenHandler = (evt) => {
   const card = evt.target.closest(".card");
   const imageItem = card.querySelector(".card__image");
   const textItem = card.querySelector(".card__title");
-  popupImageItem.src = imageItem.src;
-  popupImageItem.alt = imageItem.alt;
-  popupTextItem.textContent = textItem.textContent;
+  popupImagePhoto.src = imageItem.src;
+  popupImagePhoto.alt = imageItem.alt;
+  popupImageCaption.textContent = textItem.textContent;
   onModalOpen(popupImage);
 };
 
@@ -85,6 +93,12 @@ initialCards.forEach((card) => {
 // Добавление слушателей для открытия попапов
 buttonEdit.addEventListener("click", popupEditOpenHandler);
 buttonNewCard.addEventListener("click", () => onModalOpen(popupNewCard));
+
+// Добавление слушателей для закрытия попапов
+popupCloseButtons.forEach((button) =>
+  button.addEventListener("click", modalCloseHandler)
+);
+popups.forEach((popup) => popup.addEventListener("click", modalOverlayHandler));
 
 // Добавления обработчиков форм
 popupEditForm.addEventListener("submit", editSubmitHandler);

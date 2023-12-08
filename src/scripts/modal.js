@@ -1,18 +1,12 @@
 // Функция открытия popup
 const onModalOpen = (modal) => {
-  const closeButton = modal.querySelector(".popup__close");
   modal.classList.add("popup_is-opened");
-  closeButton.addEventListener("click", modalCloseHandler);
   document.addEventListener("keydown", keyboardHandler);
-  modal.addEventListener("click", modalOverlayHandler);
 };
 
 // Функция закрытия popup
 const onModalClose = (modal) => {
-  const closeButton = modal.querySelector(".popup__close");
-  modal.removeEventListener("click", modalOverlayHandler);
   document.removeEventListener("keydown", keyboardHandler);
-  closeButton.addEventListener("click", modalCloseHandler);
   modal.classList.remove("popup_is-opened");
 };
 
@@ -35,4 +29,4 @@ const modalOverlayHandler = (evt) => {
   }
 };
 
-export { onModalOpen, onModalClose };
+export { onModalOpen, onModalClose, modalCloseHandler, modalOverlayHandler };
