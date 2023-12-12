@@ -98,7 +98,7 @@ buttonNewCard.addEventListener("click", () => onModalOpen(popupNewCard));
 popupCloseButtons.forEach((button) =>
   button.addEventListener("click", modalCloseHandler)
 );
-popups.forEach((popup) => popup.addEventListener("click", modalOverlayHandler));
+popups.forEach((popup) => popup.addEventListener("mousedown", modalOverlayHandler));
 
 // Добавления обработчиков форм
 popupEditForm.addEventListener("submit", editSubmitHandler);
