@@ -12,6 +12,7 @@ import {
   modalCloseHandler,
   modalOverlayHandler,
 } from "./modal";
+import { isValid, toggleButtonState } from "./validation";
 
 // Темплейт карточки
 const cardTemplate = document.querySelector("#card-template").content;
@@ -24,8 +25,12 @@ const cardsContainer = document.querySelector(".places__list");
 
 const popupEdit = document.querySelector(".popup_type_edit");
 const popupEditForm = document.forms["edit-profile"];
+const popupEditInputs = Array.from(
+  popupEditForm.querySelectorAll(".popup__input")
+);
 const popupEditName = popupEditForm.name;
 const popupEditDescription = popupEditForm.description;
+const popupEditSubmitButton = popupEditForm.querySelector(".popup__button");
 const buttonEdit = document.querySelector(".profile__edit-button");
 
 const popupNewCard = document.querySelector(".popup_type_new-card");
@@ -40,6 +45,19 @@ const popupImageCaption = popupImage.querySelector(".popup__caption");
 
 const popups = document.querySelectorAll(".popup");
 const popupCloseButtons = document.querySelectorAll(".popup__close");
+
+// Функция постановики слушателей для валидации формы
+const setEventListeners = (formElement) => {
+  const inputList = Array.from(formElement.querySelectorAll(`.popup__input`));
+  const buttonElement = formElement.querySelector(".popup__button");
+  toggleButtonState(inputList, buttonElement);
+  inputList.forEach((inputElement) => {
+    inputElement.addEventListener("input", () => {
+      isValid(formElement, inputElement);
+      toggleButtonState(inputList, buttonElement);
+    });
+  });
+};
 
 // Обработчик формы редактирования профиля
 const editSubmitHandler = (evt) => {
@@ -69,6 +87,11 @@ const newCardSubmitHandler = (evt) => {
 const popupEditOpenHandler = () => {
   popupEditName.value = profileTitle.textContent;
   popupEditDescription.value = profileDescription.textContent;
+  // Обновляем состояние инпутов и кнопки после изменения данных в форме
+  popupEditInputs.forEach((inputElement) => {
+    isValid(popupEditForm, inputElement);
+  });
+  toggleButtonState(popupEditInputs, popupEditSubmitButton);
   onModalOpen(popupEdit);
 };
 
@@ -95,11 +118,16 @@ buttonEdit.addEventListener("click", popupEditOpenHandler);
 buttonNewCard.addEventListener("click", () => onModalOpen(popupNewCard));
 
 // Добавление слушателей для закрытия попапов
-popupCloseButtons.forEach((button) =>
-  button.addEventListener("click", modalCloseHandler)
-);
-popups.forEach((popup) => popup.addEventListener("mousedown", modalOverlayHandler));
+popupCloseButtons.forEach((button) => {
+  button.addEventListener("click", modalCloseHandler);
+});
+popups.forEach((popup) => {
+  popup.addEventListener("mousedown", modalOverlayHandler);
+});
 
 // Добавления обработчиков форм
 popupEditForm.addEventListener("submit", editSubmitHandler);
 popupNewCardForm.addEventListener("submit", newCardSubmitHandler);
+
+// Добавление валидации
+setEventListeners(popupEditForm);
