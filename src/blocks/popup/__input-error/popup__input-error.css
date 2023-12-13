@@ -1,0 +1,6 @@
+.popup__input-error {
+  display: inline-block;
+  color: #f00;
+  font-size: 12px;
+  width: 100%;
+}
