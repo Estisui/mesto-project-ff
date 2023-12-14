@@ -87,6 +87,9 @@
                 class="popup__input popup__input_type_card-name"
                 placeholder="Название"
                 required
+                minlength="2"
+                maxlength="40"
+                pattern="^[а-яёa-zА-ЯЁA-Z\-\s]+$"
               />
               <span class="popup__input-error place-name-error"></span>
             </div>

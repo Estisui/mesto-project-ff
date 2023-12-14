@@ -131,3 +131,4 @@ popupNewCardForm.addEventListener("submit", newCardSubmitHandler);
 
 // Добавление валидации
 setEventListeners(popupEditForm);
+setEventListeners(popupNewCardForm);
