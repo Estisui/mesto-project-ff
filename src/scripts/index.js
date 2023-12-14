@@ -12,7 +12,7 @@ import {
   modalCloseHandler,
   modalOverlayHandler,
 } from "./modal";
-import { isValid, toggleButtonState } from "./validation";
+import { clearValidation, enableValidation } from "./validation";
 
 // Темплейт карточки
 const cardTemplate = document.querySelector("#card-template").content;
@@ -46,17 +46,13 @@ const popupImageCaption = popupImage.querySelector(".popup__caption");
 const popups = document.querySelectorAll(".popup");
 const popupCloseButtons = document.querySelectorAll(".popup__close");
 
-// Функция постановики слушателей для валидации формы
-const setEventListeners = (formElement) => {
-  const inputList = Array.from(formElement.querySelectorAll(`.popup__input`));
-  const buttonElement = formElement.querySelector(".popup__button");
-  toggleButtonState(inputList, buttonElement);
-  inputList.forEach((inputElement) => {
-    inputElement.addEventListener("input", () => {
-      isValid(formElement, inputElement);
-      toggleButtonState(inputList, buttonElement);
-    });
-  });
+const validationConfig = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__input_error",
 };
 
 // Обработчик формы редактирования профиля
@@ -80,6 +76,7 @@ const newCardSubmitHandler = (evt) => {
   );
   cardsContainer.prepend(newCard);
   popupNewCardForm.reset();
+  clearValidation(popupNewCardForm, validationConfig);
   onModalClose(popupNewCard);
 };
 
@@ -87,11 +84,7 @@ const newCardSubmitHandler = (evt) => {
 const popupEditOpenHandler = () => {
   popupEditName.value = profileTitle.textContent;
   popupEditDescription.value = profileDescription.textContent;
-  // Обновляем состояние инпутов и кнопки после изменения данных в форме
-  popupEditInputs.forEach((inputElement) => {
-    isValid(popupEditForm, inputElement);
-  });
-  toggleButtonState(popupEditInputs, popupEditSubmitButton);
+  clearValidation(popupEditForm, validationConfig);
   onModalOpen(popupEdit);
 };
 
@@ -125,10 +118,14 @@ popups.forEach((popup) => {
   popup.addEventListener("mousedown", modalOverlayHandler);
 });
 
-// Добавления обработчиков форм
+// Добавление обработчиков форм
 popupEditForm.addEventListener("submit", editSubmitHandler);
 popupNewCardForm.addEventListener("submit", newCardSubmitHandler);
 
-// Добавление валидации
+/*
 setEventListeners(popupEditForm);
 setEventListeners(popupNewCardForm);
+*/
+
+// Включение валидации
+enableValidation(validationConfig);
