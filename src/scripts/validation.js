@@ -1,5 +1,12 @@
 // Функция валидации
 const isValid = (inputElement, validationConfig) => {
+  // Проверка на наличие кастомного сообщения
+  if (inputElement.validity.patternMismatch) {
+    inputElement.setCustomValidity(inputElement.dataset.errorMessage);
+  } else {
+    inputElement.setCustomValidity("");
+  }
+
   if (!inputElement.validity.valid) {
     showInputError(
       inputElement,
