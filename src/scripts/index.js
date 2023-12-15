@@ -1,6 +1,9 @@
 // Импорт стилей
 import "../pages/index.css";
 
+// Импорт картинок
+import profileImageSrc from "../images/avatar.jpg";
+
 // Импорт исходного массива карточек
 import initialCards from "./cards";
 
@@ -13,6 +16,7 @@ import {
   modalOverlayHandler,
 } from "./modal";
 import { clearValidation, enableValidation } from "./validation";
+import { getUserInfo } from "./api";
 
 // Темплейт карточки
 const cardTemplate = document.querySelector("#card-template").content;
@@ -20,17 +24,14 @@ const cardTemplate = document.querySelector("#card-template").content;
 // DOM узлы
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
+const profileImage = document.querySelector(".profile__image");
 
 const cardsContainer = document.querySelector(".places__list");
 
 const popupEdit = document.querySelector(".popup_type_edit");
 const popupEditForm = document.forms["edit-profile"];
-const popupEditInputs = Array.from(
-  popupEditForm.querySelectorAll(".popup__input")
-);
 const popupEditName = popupEditForm.name;
 const popupEditDescription = popupEditForm.description;
-const popupEditSubmitButton = popupEditForm.querySelector(".popup__button");
 const buttonEdit = document.querySelector(".profile__edit-button");
 
 const popupNewCard = document.querySelector(".popup_type_new-card");
@@ -46,6 +47,7 @@ const popupImageCaption = popupImage.querySelector(".popup__caption");
 const popups = document.querySelectorAll(".popup");
 const popupCloseButtons = document.querySelectorAll(".popup__close");
 
+// Конфиги
 const validationConfig = {
   formSelector: ".popup__form",
   inputSelector: ".popup__input",
@@ -53,6 +55,10 @@ const validationConfig = {
   inactiveButtonClass: "popup__button_disabled",
   inputErrorClass: "popup__input_type_error",
   errorClass: "popup__input_error",
+};
+const apiConfig = {
+  token: "e8253e36-fd81-4252-b6ca-e3d1791e07d1",
+  cohortId: "cohort-magistr-2",
 };
 
 // Обработчик формы редактирования профиля
@@ -99,6 +105,24 @@ const popupImageOpenHandler = (evt) => {
   onModalOpen(popupImage);
 };
 
+// Функция вывода данных о пользователе
+const renderUserInfo = (data) => {
+  profileTitle.textContent = data.name;
+  profileDescription.textContent = data.about;
+  profileImage.style.backgroundImage = `url(${data.avatar})`;
+};
+
+// Вывод информации о пользователе (или дефолтной при ошибке)
+getUserInfo(apiConfig)
+  .then((userInfo) => renderUserInfo(userInfo))
+  .catch(() =>
+    renderUserInfo({
+      name: "Жак-Ив Кусто",
+      about: "Исследователь океана",
+      avatar: profileImageSrc,
+    })
+  );
+
 // Вывести карточки на страницу
 initialCards.forEach((card) => {
   cardsContainer.append(
@@ -121,11 +145,6 @@ popups.forEach((popup) => {
 // Добавление обработчиков форм
 popupEditForm.addEventListener("submit", editSubmitHandler);
 popupNewCardForm.addEventListener("submit", newCardSubmitHandler);
-
-/*
-setEventListeners(popupEditForm);
-setEventListeners(popupNewCardForm);
-*/
 
 // Включение валидации
 enableValidation(validationConfig);
