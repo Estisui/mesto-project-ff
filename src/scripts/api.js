@@ -10,9 +10,6 @@ const getUserInfo = (apiConfig) => {
       }
       return Promise.reject(`Что-то пошло не так: ${res.status}`);
     })
-    .catch((err) => {
-      console.log(err);
-    });
 };
 
 const getCards = (apiConfig) => {
@@ -27,9 +24,6 @@ const getCards = (apiConfig) => {
       }
       return Promise.reject(`Что-то пошло не так: ${res.status}`);
     })
-    .catch((err) => {
-      console.log(err);
-    });
 }
 
 export { getUserInfo, getCards };
