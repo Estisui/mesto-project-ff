@@ -16,7 +16,7 @@ import {
   modalOverlayHandler,
 } from "./modal";
 import { clearValidation, enableValidation } from "./validation";
-import { getUserInfo } from "./api";
+import { getCards, getUserInfo } from "./api";
 
 // Темплейт карточки
 const cardTemplate = document.querySelector("#card-template").content;
@@ -59,6 +59,28 @@ const validationConfig = {
 const apiConfig = {
   token: "e8253e36-fd81-4252-b6ca-e3d1791e07d1",
   cohortId: "cohort-magistr-2",
+};
+
+// Функция вывода данных о пользователе
+const renderUserInfo = (userInfo) => {
+  profileTitle.textContent = userInfo.name;
+  profileDescription.textContent = userInfo.about;
+  profileImage.style.backgroundImage = `url(${userInfo.avatar})`;
+};
+
+// Функция вывода карточек на страницу
+const renderCards = (cardsInfo) => {
+  cardsInfo.forEach((cardInfo) => {
+    cardsContainer.append(
+      createCard(
+        cardTemplate,
+        cardInfo,
+        onLike,
+        onDelete,
+        popupImageOpenHandler
+      )
+    );
+  });
 };
 
 // Обработчик формы редактирования профиля
@@ -105,13 +127,6 @@ const popupImageOpenHandler = (evt) => {
   onModalOpen(popupImage);
 };
 
-// Функция вывода данных о пользователе
-const renderUserInfo = (data) => {
-  profileTitle.textContent = data.name;
-  profileDescription.textContent = data.about;
-  profileImage.style.backgroundImage = `url(${data.avatar})`;
-};
-
 // Вывод информации о пользователе (или дефолтной при ошибке)
 getUserInfo(apiConfig)
   .then((userInfo) => renderUserInfo(userInfo))
@@ -123,12 +138,10 @@ getUserInfo(apiConfig)
     })
   );
 
-// Вывести карточки на страницу
-initialCards.forEach((card) => {
-  cardsContainer.append(
-    createCard(cardTemplate, card, onLike, onDelete, popupImageOpenHandler)
-  );
-});
+// Вывод карточек на страницу (или дефолтных при ошибке)
+getCards(apiConfig)
+  .then((cardsInfo) => renderCards(cardsInfo))
+  .catch(() => renderCards(initialCards));
 
 // Добавление слушателей для открытия попапов
 buttonEdit.addEventListener("click", popupEditOpenHandler);
