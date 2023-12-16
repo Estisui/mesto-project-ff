@@ -7,16 +7,22 @@ const createCard = (cardTemplate, cardData, onLike, onDelete, onOpen) => {
   cardImage.alt = cardData.name;
   cardImage.addEventListener("click", onOpen);
   cardElement.querySelector(".card__title").textContent = cardData.name;
+  if (cardData.likes) {
+    const cardLikeCounter = cardElement.querySelector(".card__like-count");
+    cardLikeCounter.textContent = cardData.likes.length;
+  }
   cardElement
     .querySelector(".card__delete-button")
     .addEventListener("click", () => onDelete(cardElement));
   cardLikeButton.addEventListener("click", () => onLike(cardLikeButton));
   return cardElement;
 };
+
 // Функция удаления карточки
 const onDelete = (card) => {
   card.remove();
 };
+
 // Функция лайка карточки
 const onLike = (likeButton) => {
   likeButton.classList.toggle("card__like-button_is-active");
