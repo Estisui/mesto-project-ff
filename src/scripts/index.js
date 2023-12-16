@@ -61,6 +61,10 @@ const apiConfig = {
   cohortId: "cohort-magistr-2",
 };
 
+// Промисы
+const userInfoPromise = getUserInfo(apiConfig);
+const cardsPromise = getCards(apiConfig);
+
 // Функция вывода данных о пользователе
 const renderUserInfo = (userInfo) => {
   profileTitle.textContent = userInfo.name;
@@ -139,7 +143,7 @@ const popupImageOpenHandler = (evt) => {
 };
 
 // Вывод информации о пользователе (или дефолтной при ошибке)
-getUserInfo(apiConfig)
+userInfoPromise
   .then((userInfo) => renderUserInfo(userInfo))
   .catch(() =>
     renderUserInfo({
@@ -150,9 +154,13 @@ getUserInfo(apiConfig)
   );
 
 // Вывод карточек на страницу (или дефолтных при ошибке)
-getCards(apiConfig)
-  .then((cardsInfo) => renderCards(cardsInfo))
-  .catch(() => renderCards(initialCards));
+Promise.all([cardsPromise, userInfoPromise])
+  .then(([cardsInfo]) => {
+    renderCards(cardsInfo);
+  })
+  .catch(() => {
+    renderCards(initialCards);
+  });
 
 // Добавление слушателей для открытия попапов
 buttonEdit.addEventListener("click", popupEditOpenHandler);
