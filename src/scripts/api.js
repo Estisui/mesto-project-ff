@@ -38,4 +38,18 @@ const getCards = (apiConfig) => {
   });
 };
 
-export { getUserInfo, updateUserInfo, getCards };
+const postCard = (apiConfig, cardInfo) => {
+  fetch(`https://nomoreparties.co/v1/${apiConfig.cohortId}/cards`, {
+    method: "POST",
+    headers: {
+      authorization: apiConfig.token,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: cardInfo.name,
+      link: cardInfo.link,
+    }),
+  }).catch(() => console.log("Не удалось добавить карточку"));
+};
+
+export { getUserInfo, updateUserInfo, getCards, postCard };

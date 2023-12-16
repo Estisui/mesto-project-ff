@@ -16,7 +16,7 @@ import {
   modalOverlayHandler,
 } from "./modal";
 import { clearValidation, enableValidation } from "./validation";
-import { getCards, getUserInfo, updateUserInfo } from "./api";
+import { getCards, getUserInfo, postCard, updateUserInfo } from "./api";
 
 // Темплейт карточки
 const cardTemplate = document.querySelector("#card-template").content;
@@ -101,9 +101,14 @@ const editSubmitHandler = (evt) => {
 // Обработчик формы добавления карточки
 const newCardSubmitHandler = (evt) => {
   evt.preventDefault();
+  const cardInfo = {
+    name: popupNewCardName.value,
+    link: popupNewCardLink.value,
+  };
+  postCard(apiConfig, cardInfo);
   const newCard = createCard(
     cardTemplate,
-    { name: popupNewCardName.value, link: popupNewCardLink.value },
+    cardInfo,
     onLike,
     onDelete,
     popupImageOpenHandler
