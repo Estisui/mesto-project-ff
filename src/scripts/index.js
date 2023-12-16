@@ -16,7 +16,7 @@ import {
   modalOverlayHandler,
 } from "./modal";
 import { clearValidation, enableValidation } from "./validation";
-import { getCards, getUserInfo } from "./api";
+import { getCards, getUserInfo, updateUserInfo } from "./api";
 
 // Темплейт карточки
 const cardTemplate = document.querySelector("#card-template").content;
@@ -65,7 +65,9 @@ const apiConfig = {
 const renderUserInfo = (userInfo) => {
   profileTitle.textContent = userInfo.name;
   profileDescription.textContent = userInfo.about;
-  profileImage.style.backgroundImage = `url(${userInfo.avatar})`;
+  if (userInfo.avatar) {
+    profileImage.style.backgroundImage = `url(${userInfo.avatar})`;
+  }
 };
 
 // Функция вывода карточек на страницу
@@ -86,8 +88,12 @@ const renderCards = (cardsInfo) => {
 // Обработчик формы редактирования профиля
 const editSubmitHandler = (evt) => {
   evt.preventDefault();
-  profileTitle.textContent = popupEditName.value;
-  profileDescription.textContent = popupEditDescription.value;
+  const userInfo = {
+    name: popupEditName.value,
+    about: popupEditDescription.value,
+  };
+  updateUserInfo(apiConfig, userInfo);
+  renderUserInfo(userInfo);
   popupEditForm.reset();
   onModalClose(popupEdit);
 };
