@@ -71,12 +71,13 @@ const renderUserInfo = (userInfo) => {
 };
 
 // Функция вывода карточек на страницу
-const renderCards = (cardsInfo) => {
+const renderCards = (cardsInfo, userInfo = {}) => {
   cardsInfo.forEach((cardInfo) => {
     cardsContainer.append(
       createCard(
         cardTemplate,
         cardInfo,
+        userInfo,
         onLike,
         onDelete,
         popupImageOpenHandler
@@ -101,19 +102,30 @@ const editSubmitHandler = (evt) => {
 // Обработчик формы добавления карточки
 const newCardSubmitHandler = (evt) => {
   evt.preventDefault();
-  const cardInfo = {
+  let cardData = {
     name: popupNewCardName.value,
     link: popupNewCardLink.value,
   };
-  postCard(cardInfo);
-  const newCard = createCard(
-    cardTemplate,
-    cardInfo,
-    onLike,
-    onDelete,
-    popupImageOpenHandler
-  );
-  cardsContainer.prepend(newCard);
+  postCard(cardData)
+    .then((cardInfo) => {
+      cardData = cardInfo; // заменяем данные карточки данными о ней с сервера
+    })
+    .catch(() => console.log("Не удалось добавить карточку на сервер"))
+    .finally(() => {
+      // Выставляем userData._id вручную, если карточка была добавлена на сервер, чтобы не делать лишний запрос на сервер (мы знаем, что сами создали карточку)
+      const userData = cardData.hasOwnProperty("owner")
+        ? { _id: cardData.owner._id }
+        : {};
+      const newCard = createCard(
+        cardTemplate,
+        cardData,
+        userData,
+        onLike,
+        onDelete,
+        popupImageOpenHandler
+      );
+      cardsContainer.prepend(newCard);
+    });
   popupNewCardForm.reset();
   clearValidation(popupNewCardForm, validationConfig);
   onModalClose(popupNewCard);
@@ -151,8 +163,8 @@ userInfoPromise
 
 // Вывод карточек на страницу (или дефолтных при ошибке)
 Promise.all([cardsPromise, userInfoPromise])
-  .then(([cardsInfo]) => {
-    renderCards(cardsInfo);
+  .then(([cardsInfo, userInfo]) => {
+    renderCards(cardsInfo, userInfo);
   })
   .catch(() => {
     renderCards(initialCards);

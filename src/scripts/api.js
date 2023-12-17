@@ -27,7 +27,14 @@ const updateUserInfo = (userInfo) => {
       name: userInfo.name,
       about: userInfo.about,
     }),
-  }).catch(() => console.log("Не удалось обновить профиль"));
+  })
+    .then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      return Promise.reject(`Что-то пошло не так: ${res.status}`);
+    })
+    .catch(() => console.log("Не удалось обновить профиль"));
 };
 
 const getCards = () => {
@@ -44,7 +51,7 @@ const getCards = () => {
 };
 
 const postCard = (cardInfo) => {
-  fetch(`https://nomoreparties.co/v1/${apiConfig.cohortId}/cards`, {
+  return fetch(`https://nomoreparties.co/v1/${apiConfig.cohortId}/cards`, {
     method: "POST",
     headers: {
       authorization: apiConfig.token,
@@ -54,7 +61,29 @@ const postCard = (cardInfo) => {
       name: cardInfo.name,
       link: cardInfo.link,
     }),
-  }).catch(() => console.log("Не удалось добавить карточку"));
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Что-то пошло не так: ${res.status}`);
+  });
 };
 
-export { getUserInfo, updateUserInfo, getCards, postCard };
+const deleteCard = (cardInfo) => {
+  return fetch(
+    `https://nomoreparties.co/v1/${apiConfig.cohortId}/cards/${cardInfo._id}`,
+    {
+      method: "DELETE",
+      headers: {
+        authorization: apiConfig.token,
+      },
+    }
+  ).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Что-то пошло не так: ${res.status}`);
+  });
+};
+
+export { getUserInfo, updateUserInfo, getCards, postCard, deleteCard };
