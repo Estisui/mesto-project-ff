@@ -56,14 +56,10 @@ const validationConfig = {
   inputErrorClass: "popup__input_type_error",
   errorClass: "popup__input_error",
 };
-const apiConfig = {
-  token: "e8253e36-fd81-4252-b6ca-e3d1791e07d1",
-  cohortId: "cohort-magistr-2",
-};
 
 // Промисы
-const userInfoPromise = getUserInfo(apiConfig);
-const cardsPromise = getCards(apiConfig);
+const userInfoPromise = getUserInfo();
+const cardsPromise = getCards();
 
 // Функция вывода данных о пользователе
 const renderUserInfo = (userInfo) => {
@@ -96,7 +92,7 @@ const editSubmitHandler = (evt) => {
     name: popupEditName.value,
     about: popupEditDescription.value,
   };
-  updateUserInfo(apiConfig, userInfo);
+  updateUserInfo(userInfo);
   renderUserInfo(userInfo);
   popupEditForm.reset();
   onModalClose(popupEdit);
@@ -109,7 +105,7 @@ const newCardSubmitHandler = (evt) => {
     name: popupNewCardName.value,
     link: popupNewCardLink.value,
   };
-  postCard(apiConfig, cardInfo);
+  postCard(cardInfo);
   const newCard = createCard(
     cardTemplate,
     cardInfo,

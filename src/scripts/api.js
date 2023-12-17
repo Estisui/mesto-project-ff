@@ -1,4 +1,9 @@
-const getUserInfo = (apiConfig) => {
+const apiConfig = {
+  token: "e8253e36-fd81-4252-b6ca-e3d1791e07d1",
+  cohortId: "cohort-magistr-2",
+};
+
+const getUserInfo = () => {
   return fetch(`https://nomoreparties.co/v1/${apiConfig.cohortId}/users/me`, {
     headers: {
       authorization: apiConfig.token,
@@ -11,7 +16,7 @@ const getUserInfo = (apiConfig) => {
   });
 };
 
-const updateUserInfo = (apiConfig, userInfo) => {
+const updateUserInfo = (userInfo) => {
   fetch(`https://nomoreparties.co/v1/${apiConfig.cohortId}/users/me`, {
     method: "PATCH",
     headers: {
@@ -25,7 +30,7 @@ const updateUserInfo = (apiConfig, userInfo) => {
   }).catch(() => console.log("Не удалось обновить профиль"));
 };
 
-const getCards = (apiConfig) => {
+const getCards = () => {
   return fetch(`https://nomoreparties.co/v1/${apiConfig.cohortId}/cards`, {
     headers: {
       authorization: apiConfig.token,
@@ -38,7 +43,7 @@ const getCards = (apiConfig) => {
   });
 };
 
-const postCard = (apiConfig, cardInfo) => {
+const postCard = (cardInfo) => {
   fetch(`https://nomoreparties.co/v1/${apiConfig.cohortId}/cards`, {
     method: "POST",
     headers: {
