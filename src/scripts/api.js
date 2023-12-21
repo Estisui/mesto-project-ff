@@ -86,4 +86,38 @@ const deleteCard = (cardInfo) => {
   });
 };
 
-export { getUserInfo, updateUserInfo, getCards, postCard, deleteCard };
+const putLike = (cardInfo) => {
+  return fetch(
+    `https://nomoreparties.co/v1/${apiConfig.cohortId}/cards/likes/${cardInfo._id}`,
+    {
+      method: "PUT",
+      headers: {
+        authorization: apiConfig.token,
+      },
+    }
+  ).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Что-то пошло не так: ${res.status}`);
+  });
+}
+
+const deleteLike = (cardInfo) => {
+  return fetch(
+    `https://nomoreparties.co/v1/${apiConfig.cohortId}/cards/likes/${cardInfo._id}`,
+    {
+      method: "DELETE",
+      headers: {
+        authorization: apiConfig.token,
+      },
+    }
+  ).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Что-то пошло не так: ${res.status}`);
+  });
+}
+
+export { getUserInfo, updateUserInfo, getCards, postCard, deleteCard, putLike, deleteLike };
