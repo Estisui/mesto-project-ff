@@ -93,8 +93,8 @@ const renderCards = (cardsInfo, userInfo = {}) => {
         userInfo,
         onLike,
         onDelete,
-        popupImageOpenHandler,
-      ),
+        popupImageOpenHandler
+      )
     );
   });
 };
@@ -144,13 +144,13 @@ const newCardSubmitHandler = (evt) => {
         userData,
         onLike,
         onDelete,
-        popupImageOpenHandler,
+        popupImageOpenHandler
       );
       cardsContainer.prepend(newCard);
+      onModalClose(popupNewCard);
+      popupNewCardForm.reset();
+      clearValidation(popupNewCardForm, validationConfig);
     });
-  onModalClose(popupNewCard);
-  popupNewCardForm.reset();
-  clearValidation(popupNewCardForm, validationConfig);
 };
 
 const avatarSubmitHandler = (evt) => {
@@ -160,9 +160,11 @@ const avatarSubmitHandler = (evt) => {
   updateAvatar(avatarLink)
     .then((userInfo) => renderUserInfo(userInfo))
     .catch(() => console.log("Не удалось обновить аватар"))
-    .finally(() => buttonToggleLoading(popupAvatarSubmitButton, "loaded"));
-  popupAvatarForm.reset();
-  onModalClose(popupAvatar);
+    .finally(() => {
+      buttonToggleLoading(popupAvatarSubmitButton, "loaded");
+      popupAvatarForm.reset();
+      onModalClose(popupAvatar);
+    });
 };
 
 // Обработчик открытия модального окна для редактирования профиля
@@ -201,7 +203,7 @@ userInfoPromise
       name: "Жак-Ив Кусто",
       about: "Исследователь океана",
       avatar: profileImageSrc,
-    }),
+    })
   );
 
 // Вывод карточек на страницу (или дефолтных при ошибке)

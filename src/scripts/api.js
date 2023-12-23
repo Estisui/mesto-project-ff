@@ -49,7 +49,7 @@ const getCards = () => {
 };
 
 const postCard = (cardInfo) => {
-  return fetch(`1https://nomoreparties.co/v1/${apiConfig.cohortId}/cards`, {
+  return fetch(`https://nomoreparties.co/v1/${apiConfig.cohortId}/cards`, {
     method: "POST",
     headers: {
       authorization: apiConfig.token,
