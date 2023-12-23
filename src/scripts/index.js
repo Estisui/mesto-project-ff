@@ -16,7 +16,7 @@ import {
   modalOverlayHandler,
 } from "./modal";
 import { clearValidation, enableValidation } from "./validation";
-import { getCards, getUserInfo, postCard, updateUserInfo } from "./api";
+import { getCards, getUserInfo, postCard, updateAvatar, updateUserInfo } from "./api";
 
 // Темплейт карточки
 const cardTemplate = document.querySelector("#card-template").content;
@@ -43,6 +43,10 @@ const buttonNewCard = document.querySelector(".profile__add-button");
 const popupImage = document.querySelector(".popup_type_image");
 const popupImagePhoto = popupImage.querySelector(".popup__image");
 const popupImageCaption = popupImage.querySelector(".popup__caption");
+
+const popupAvatar = document.querySelector(".popup_type_avatar");
+const popupAvatarForm = document.forms["edit-avatar"];
+const popupAvatarLink = popupAvatarForm['avatar-link'];
 
 const popups = document.querySelectorAll(".popup");
 const popupCloseButtons = document.querySelectorAll(".popup__close");
@@ -131,6 +135,14 @@ const newCardSubmitHandler = (evt) => {
   onModalClose(popupNewCard);
 };
 
+const avatarSubmitHandler = (evt) => {
+  evt.preventDefault();
+  const avatarLink = popupAvatarLink.value;
+  updateAvatar(avatarLink).then((userInfo) => renderUserInfo(userInfo)).catch(() => console.log('Не удалось обновить аватар'));
+  popupAvatarForm.reset();
+  onModalClose(popupAvatar);
+};
+
 // Обработчик открытия модального окна для редактирования профиля
 const popupEditOpenHandler = () => {
   popupEditName.value = profileTitle.textContent;
@@ -173,6 +185,7 @@ Promise.all([cardsPromise, userInfoPromise])
 // Добавление слушателей для открытия попапов
 buttonEdit.addEventListener("click", popupEditOpenHandler);
 buttonNewCard.addEventListener("click", () => onModalOpen(popupNewCard));
+profileImage.addEventListener("click", () => onModalOpen(popupAvatar));
 
 // Добавление слушателей для закрытия попапов
 popupCloseButtons.forEach((button) => {
@@ -185,6 +198,7 @@ popups.forEach((popup) => {
 // Добавление обработчиков форм
 popupEditForm.addEventListener("submit", editSubmitHandler);
 popupNewCardForm.addEventListener("submit", newCardSubmitHandler);
+popupAvatarForm.addEventListener("submit", avatarSubmitHandler);
 
 // Включение валидации
 enableValidation(validationConfig);

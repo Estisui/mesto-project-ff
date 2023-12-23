@@ -101,7 +101,7 @@ const putLike = (cardInfo) => {
     }
     return Promise.reject(`Что-то пошло не так: ${res.status}`);
   });
-}
+};
 
 const deleteLike = (cardInfo) => {
   return fetch(
@@ -118,6 +118,36 @@ const deleteLike = (cardInfo) => {
     }
     return Promise.reject(`Что-то пошло не так: ${res.status}`);
   });
-}
+};
 
-export { getUserInfo, updateUserInfo, getCards, postCard, deleteCard, putLike, deleteLike };
+const updateAvatar = (avatar) => {
+  return fetch(
+    `https://nomoreparties.co/v1/${apiConfig.cohortId}/users/me/avatar`,
+    {
+      method: "PATCH",
+      headers: {
+        authorization: apiConfig.token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        avatar: avatar,
+      }),
+    }
+  ).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Что-то пошло не так: ${res.status}`);
+  });
+};
+
+export {
+  getUserInfo,
+  updateUserInfo,
+  getCards,
+  postCard,
+  deleteCard,
+  putLike,
+  deleteLike,
+  updateAvatar
+};
