@@ -17,7 +17,7 @@ const getUserInfo = () => {
 };
 
 const updateUserInfo = (userInfo) => {
-  fetch(`https://nomoreparties.co/v1/${apiConfig.cohortId}/users/me`, {
+  return fetch(`https://nomoreparties.co/v1/${apiConfig.cohortId}/users/me`, {
     method: "PATCH",
     headers: {
       authorization: apiConfig.token,
@@ -34,7 +34,6 @@ const updateUserInfo = (userInfo) => {
       }
       return Promise.reject(`Что-то пошло не так: ${res.status}`);
     })
-    .catch(() => console.log("Не удалось обновить профиль"));
 };
 
 const getCards = () => {
@@ -51,7 +50,7 @@ const getCards = () => {
 };
 
 const postCard = (cardInfo) => {
-  return fetch(`https://nomoreparties.co/v1/${apiConfig.cohortId}/cards`, {
+  return fetch(`1https://nomoreparties.co/v1/${apiConfig.cohortId}/cards`, {
     method: "POST",
     headers: {
       authorization: apiConfig.token,
@@ -149,5 +148,5 @@ export {
   deleteCard,
   putLike,
   deleteLike,
-  updateAvatar
+  updateAvatar,
 };

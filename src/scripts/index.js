@@ -16,7 +16,13 @@ import {
   modalOverlayHandler,
 } from "./modal";
 import { clearValidation, enableValidation } from "./validation";
-import { getCards, getUserInfo, postCard, updateAvatar, updateUserInfo } from "./api";
+import {
+  getCards,
+  getUserInfo,
+  postCard,
+  updateAvatar,
+  updateUserInfo,
+} from "./api";
 
 // Темплейт карточки
 const cardTemplate = document.querySelector("#card-template").content;
@@ -32,12 +38,14 @@ const popupEdit = document.querySelector(".popup_type_edit");
 const popupEditForm = document.forms["edit-profile"];
 const popupEditName = popupEditForm.name;
 const popupEditDescription = popupEditForm.description;
+const popupEditSubmitButton = popupEditForm.querySelector(".popup__button");
 const buttonEdit = document.querySelector(".profile__edit-button");
 
 const popupNewCard = document.querySelector(".popup_type_new-card");
 const popupNewCardForm = document.forms["new-place"];
 const popupNewCardName = popupNewCardForm["place-name"];
 const popupNewCardLink = popupNewCardForm.link;
+const popupNewCardSubmitButton = popupNewCard.querySelector(".popup__button");
 const buttonNewCard = document.querySelector(".profile__add-button");
 
 const popupImage = document.querySelector(".popup_type_image");
@@ -46,7 +54,8 @@ const popupImageCaption = popupImage.querySelector(".popup__caption");
 
 const popupAvatar = document.querySelector(".popup_type_avatar");
 const popupAvatarForm = document.forms["edit-avatar"];
-const popupAvatarLink = popupAvatarForm['avatar-link'];
+const popupAvatarLink = popupAvatarForm["avatar-link"];
+const popupAvatarSubmitButton = popupAvatar.querySelector(".popup__button");
 
 const popups = document.querySelectorAll(".popup");
 const popupCloseButtons = document.querySelectorAll(".popup__close");
@@ -93,14 +102,21 @@ const renderCards = (cardsInfo, userInfo = {}) => {
 // Обработчик формы редактирования профиля
 const editSubmitHandler = (evt) => {
   evt.preventDefault();
-  const userInfo = {
+  const userData = {
     name: popupEditName.value,
     about: popupEditDescription.value,
   };
-  updateUserInfo(userInfo);
-  renderUserInfo(userInfo);
-  popupEditForm.reset();
-  onModalClose(popupEdit);
+  buttonToggleLoading(popupEditSubmitButton, "loading");
+  // Обновление профиля только при успешном запросе
+  updateUserInfo(userData)
+    .then((userInfo) => {
+      renderUserInfo(userInfo);
+      onModalClose(popupEdit);
+    })
+    .catch(() => console.log("Не удалось обновить профиль"))
+    .finally(() => {
+      buttonToggleLoading(popupEditSubmitButton, "loaded");
+    });
 };
 
 // Обработчик формы добавления карточки
@@ -110,12 +126,14 @@ const newCardSubmitHandler = (evt) => {
     name: popupNewCardName.value,
     link: popupNewCardLink.value,
   };
+  buttonToggleLoading(popupNewCardSubmitButton, "loading");
   postCard(cardData)
     .then((cardInfo) => {
       cardData = cardInfo; // заменяем данные карточки данными о ней с сервера
     })
     .catch(() => console.log("Не удалось добавить карточку на сервер"))
     .finally(() => {
+      buttonToggleLoading(popupNewCardSubmitButton, "loaded");
       // Выставляем userData._id вручную, если карточка была добавлена на сервер, чтобы не делать лишний запрос на сервер (мы знаем, что сами создали карточку)
       const userData = cardData.hasOwnProperty("owner")
         ? { _id: cardData.owner._id }
@@ -130,15 +148,19 @@ const newCardSubmitHandler = (evt) => {
       );
       cardsContainer.prepend(newCard);
     });
+  onModalClose(popupNewCard);
   popupNewCardForm.reset();
   clearValidation(popupNewCardForm, validationConfig);
-  onModalClose(popupNewCard);
 };
 
 const avatarSubmitHandler = (evt) => {
   evt.preventDefault();
   const avatarLink = popupAvatarLink.value;
-  updateAvatar(avatarLink).then((userInfo) => renderUserInfo(userInfo)).catch(() => console.log('Не удалось обновить аватар'));
+  buttonToggleLoading(popupAvatarSubmitButton, "loading");
+  updateAvatar(avatarLink)
+    .then((userInfo) => renderUserInfo(userInfo))
+    .catch(() => console.log("Не удалось обновить аватар"))
+    .finally(() => buttonToggleLoading(popupAvatarSubmitButton, "loaded"));
   popupAvatarForm.reset();
   onModalClose(popupAvatar);
 };
@@ -160,6 +182,15 @@ const popupImageOpenHandler = (evt) => {
   popupImagePhoto.alt = imageItem.alt;
   popupImageCaption.textContent = textItem.textContent;
   onModalOpen(popupImage);
+};
+
+// Функция вывода состояния загрузки
+const buttonToggleLoading = (button, state) => {
+  if (state === "loading") {
+    button.textContent = "Сохранение...";
+  } else {
+    button.textContent = "Сохранить";
+  }
 };
 
 // Вывод информации о пользователе (или дефолтной при ошибке)
