@@ -11,7 +11,7 @@ const isValid = (inputElement, validationConfig) => {
     showInputError(
       inputElement,
       inputElement.validationMessage,
-      validationConfig
+      validationConfig,
     );
   } else {
     hideInputError(inputElement, validationConfig);
@@ -53,10 +53,10 @@ const hideInputError = (inputElement, validationConfig) => {
 // Функция постановики слушателей для валидации формы
 const setEventListeners = (formElement, validationConfig) => {
   const inputList = Array.from(
-    formElement.querySelectorAll(validationConfig.inputSelector)
+    formElement.querySelectorAll(validationConfig.inputSelector),
   );
   const buttonElement = formElement.querySelector(
-    validationConfig.submitButtonSelector
+    validationConfig.submitButtonSelector,
   );
   toggleButtonState(inputList, buttonElement, validationConfig);
   inputList.forEach((inputElement) => {
@@ -70,7 +70,7 @@ const setEventListeners = (formElement, validationConfig) => {
 // Функция включения валидации
 const enableValidation = (validationConfig) => {
   const formList = Array.from(
-    document.querySelectorAll(validationConfig.formSelector)
+    document.querySelectorAll(validationConfig.formSelector),
   );
   formList.forEach((formElement) => {
     setEventListeners(formElement, validationConfig);
@@ -80,14 +80,14 @@ const enableValidation = (validationConfig) => {
 // Функция сброса состояния валидации
 const clearValidation = (formElement, validationConfig) => {
   const inputList = Array.from(
-    formElement.querySelectorAll(validationConfig.inputSelector)
+    formElement.querySelectorAll(validationConfig.inputSelector),
   );
   const submitButton = formElement.querySelector(
-    validationConfig.submitButtonSelector
+    validationConfig.submitButtonSelector,
   );
   // Сброс сообщений об ошибках
   inputList.forEach((inputElement) =>
-    hideInputError(inputElement, validationConfig)
+    hideInputError(inputElement, validationConfig),
   );
   // Сброс состояния кнопки
   toggleButtonState(inputList, submitButton, validationConfig);

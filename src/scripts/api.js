@@ -27,13 +27,12 @@ const updateUserInfo = (userInfo) => {
       name: userInfo.name,
       about: userInfo.about,
     }),
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      return Promise.reject(`Что-то пошло не так: ${res.status}`);
-    })
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Что-то пошло не так: ${res.status}`);
+  });
 };
 
 const getCards = () => {
@@ -76,7 +75,7 @@ const deleteCard = (cardInfo) => {
       headers: {
         authorization: apiConfig.token,
       },
-    }
+    },
   ).then((res) => {
     if (res.ok) {
       return res.json();
@@ -93,7 +92,7 @@ const putLike = (cardInfo) => {
       headers: {
         authorization: apiConfig.token,
       },
-    }
+    },
   ).then((res) => {
     if (res.ok) {
       return res.json();
@@ -110,7 +109,7 @@ const deleteLike = (cardInfo) => {
       headers: {
         authorization: apiConfig.token,
       },
-    }
+    },
   ).then((res) => {
     if (res.ok) {
       return res.json();
@@ -131,7 +130,7 @@ const updateAvatar = (avatar) => {
       body: JSON.stringify({
         avatar: avatar,
       }),
-    }
+    },
   ).then((res) => {
     if (res.ok) {
       return res.json();

@@ -93,8 +93,8 @@ const renderCards = (cardsInfo, userInfo = {}) => {
         userInfo,
         onLike,
         onDelete,
-        popupImageOpenHandler
-      )
+        popupImageOpenHandler,
+      ),
     );
   });
 };
@@ -144,7 +144,7 @@ const newCardSubmitHandler = (evt) => {
         userData,
         onLike,
         onDelete,
-        popupImageOpenHandler
+        popupImageOpenHandler,
       );
       cardsContainer.prepend(newCard);
     });
@@ -201,7 +201,7 @@ userInfoPromise
       name: "Жак-Ив Кусто",
       about: "Исследователь океана",
       avatar: profileImageSrc,
-    })
+    }),
   );
 
 // Вывод карточек на страницу (или дефолтных при ошибке)

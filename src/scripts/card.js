@@ -7,7 +7,7 @@ const createCard = (
   userData,
   onLike,
   onDelete,
-  onOpen
+  onOpen,
 ) => {
   const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
   const cardImage = cardElement.querySelector(".card__image");
@@ -25,13 +25,13 @@ const createCard = (
     cardData.owner._id === userData._id
   ) {
     cardDeleteButton.addEventListener("click", () =>
-      onDelete(cardElement, cardData)
+      onDelete(cardElement, cardData),
     );
   } else {
     cardDeleteButton.remove();
   }
   cardLikeButton.addEventListener("click", () =>
-    onLike(cardElement, cardLikeButton, cardData, userData)
+    onLike(cardElement, cardLikeButton, cardData, userData),
   );
   return cardElement;
 };
