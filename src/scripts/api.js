@@ -1,141 +1,85 @@
 const apiConfig = {
-  token: "e8253e36-fd81-4252-b6ca-e3d1791e07d1",
-  cohortId: "cohort-magistr-2",
+  baseUrl: "https://nomoreparties.co/v1/cohort-magistr-2",
+  headers: {
+    authorization: "e8253e36-fd81-4252-b6ca-e3d1791e07d1",
+    "Content-Type": "application/json",
+  },
 };
 
+const checkResponse = (res) => {
+  if (res.ok) {
+    return res.json();
+  }
+  return Promise.reject(`Ошибка ${res.status}`);
+};
+
+const request = (url, options) => {
+  // принимает два аргумента: урл и объект опций, как и `fetch`
+  return fetch(url, options).then(checkResponse);
+}
+
 const getUserInfo = () => {
-  return fetch(`https://nomoreparties.co/v1/${apiConfig.cohortId}/users/me`, {
-    headers: {
-      authorization: apiConfig.token,
-    },
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Что-то пошло не так: ${res.status}`);
+  return request(`${apiConfig.baseUrl}/users/me`, {
+    headers: apiConfig.headers,
   });
 };
 
 const updateUserInfo = (userInfo) => {
-  return fetch(`https://nomoreparties.co/v1/${apiConfig.cohortId}/users/me`, {
+  return request(`${apiConfig.baseUrl}/users/me`, {
     method: "PATCH",
-    headers: {
-      authorization: apiConfig.token,
-      "Content-Type": "application/json",
-    },
+    headers: apiConfig.headers,
     body: JSON.stringify({
       name: userInfo.name,
       about: userInfo.about,
     }),
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Что-то пошло не так: ${res.status}`);
   });
 };
 
 const getCards = () => {
-  return fetch(`https://nomoreparties.co/v1/${apiConfig.cohortId}/cards`, {
-    headers: {
-      authorization: apiConfig.token,
-    },
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Что-то пошло не так: ${res.status}`);
+  return request(`${apiConfig.baseUrl}/cards`, {
+    headers: apiConfig.headers,
   });
 };
 
 const postCard = (cardInfo) => {
-  return fetch(`https://nomoreparties.co/v1/${apiConfig.cohortId}/cards`, {
+  return request(`${apiConfig.baseUrl}/cards`, {
     method: "POST",
-    headers: {
-      authorization: apiConfig.token,
-      "Content-Type": "application/json",
-    },
+    headers: apiConfig.headers,
     body: JSON.stringify({
       name: cardInfo.name,
       link: cardInfo.link,
     }),
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Что-то пошло не так: ${res.status}`);
   });
 };
 
 const deleteCard = (cardInfo) => {
-  return fetch(
-    `https://nomoreparties.co/v1/${apiConfig.cohortId}/cards/${cardInfo._id}`,
-    {
-      method: "DELETE",
-      headers: {
-        authorization: apiConfig.token,
-      },
-    },
-  ).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Что-то пошло не так: ${res.status}`);
+  return request(`${apiConfig.baseUrl}/cards/${cardInfo._id}`, {
+    method: "DELETE",
+    headers: apiConfig.headers,
   });
 };
 
 const putLike = (cardInfo) => {
-  return fetch(
-    `https://nomoreparties.co/v1/${apiConfig.cohortId}/cards/likes/${cardInfo._id}`,
-    {
-      method: "PUT",
-      headers: {
-        authorization: apiConfig.token,
-      },
-    },
-  ).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Что-то пошло не так: ${res.status}`);
+  return request(`${apiConfig.baseUrl}/cards/likes/${cardInfo._id}`, {
+    method: "PUT",
+    headers: apiConfig.headers,
   });
 };
 
 const deleteLike = (cardInfo) => {
-  return fetch(
-    `https://nomoreparties.co/v1/${apiConfig.cohortId}/cards/likes/${cardInfo._id}`,
-    {
-      method: "DELETE",
-      headers: {
-        authorization: apiConfig.token,
-      },
-    },
-  ).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Что-то пошло не так: ${res.status}`);
+  return request(`${apiConfig.baseUrl}/cards/likes/${cardInfo._id}`, {
+    method: "DELETE",
+    headers: apiConfig.headers,
   });
 };
 
 const updateAvatar = (avatar) => {
-  return fetch(
-    `https://nomoreparties.co/v1/${apiConfig.cohortId}/users/me/avatar`,
-    {
-      method: "PATCH",
-      headers: {
-        authorization: apiConfig.token,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        avatar: avatar,
-      }),
-    },
-  ).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Что-то пошло не так: ${res.status}`);
+  return request(`${apiConfig.baseUrl}/users/me/avatar`, {
+    method: "PATCH",
+    headers: apiConfig.headers,
+    body: JSON.stringify({
+      avatar: avatar,
+    }),
   });
 };
 

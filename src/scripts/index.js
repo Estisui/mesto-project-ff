@@ -12,8 +12,8 @@ import { createCard, onDelete, onLike } from "./card";
 import {
   onModalOpen,
   onModalClose,
-  modalCloseHandler,
-  modalOverlayHandler,
+  handleModalClose,
+  handleModalOverlay,
 } from "./modal";
 import { clearValidation, enableValidation } from "./validation";
 import {
@@ -93,20 +93,20 @@ const renderCards = (cardsInfo, userInfo = {}) => {
         userInfo,
         onLike,
         onDelete,
-        popupImageOpenHandler
+        handlePopupImageOpen
       )
     );
   });
 };
 
 // Обработчик формы редактирования профиля
-const editSubmitHandler = (evt) => {
+const handleEditFormSubmit = (evt) => {
   evt.preventDefault();
   const userData = {
     name: popupEditName.value,
     about: popupEditDescription.value,
   };
-  buttonToggleLoading(popupEditSubmitButton, "loading");
+  toggleButtonLoading(popupEditSubmitButton, "loading");
   // Обновление профиля только при успешном запросе
   updateUserInfo(userData)
     .then((userInfo) => {
@@ -115,60 +115,60 @@ const editSubmitHandler = (evt) => {
     })
     .catch(() => console.log("Не удалось обновить профиль"))
     .finally(() => {
-      buttonToggleLoading(popupEditSubmitButton, "loaded");
+      toggleButtonLoading(popupEditSubmitButton, "loaded");
     });
 };
 
 // Обработчик формы добавления карточки
-const newCardSubmitHandler = (evt) => {
+const handleNewCardFormSubmit = (evt) => {
   evt.preventDefault();
   let cardData = {
     name: popupNewCardName.value,
     link: popupNewCardLink.value,
   };
-  buttonToggleLoading(popupNewCardSubmitButton, "loading");
+  toggleButtonLoading(popupNewCardSubmitButton, "loading");
   postCard(cardData)
     .then((cardInfo) => {
-      cardData = cardInfo; // заменяем данные карточки данными о ней с сервера
-    })
-    .catch(() => console.log("Не удалось добавить карточку на сервер"))
-    .finally(() => {
-      buttonToggleLoading(popupNewCardSubmitButton, "loaded");
       // Выставляем userData._id вручную, если карточка была добавлена на сервер, чтобы не делать лишний запрос на сервер (мы знаем, что сами создали карточку)
-      const userData = cardData.hasOwnProperty("owner")
-        ? { _id: cardData.owner._id }
-        : {};
+      const userData = { _id: cardInfo.owner._id };
       const newCard = createCard(
         cardTemplate,
-        cardData,
+        cardInfo,
         userData,
         onLike,
         onDelete,
-        popupImageOpenHandler
+        handlePopupImageOpen
       );
       cardsContainer.prepend(newCard);
       onModalClose(popupNewCard);
       popupNewCardForm.reset();
       clearValidation(popupNewCardForm, validationConfig);
+    })
+    .catch(() => console.log("Не удалось добавить карточку на сервер"))
+    .finally(() => {
+      toggleButtonLoading(popupNewCardSubmitButton, "loaded");
     });
 };
 
-const avatarSubmitHandler = (evt) => {
+const handleAvatarFormSubmit = (evt) => {
   evt.preventDefault();
   const avatarLink = popupAvatarLink.value;
-  buttonToggleLoading(popupAvatarSubmitButton, "loading");
+  toggleButtonLoading(popupAvatarSubmitButton, "loading");
   updateAvatar(avatarLink)
-    .then((userInfo) => renderUserInfo(userInfo))
+    .then((userInfo) => {
+      renderUserInfo(userInfo);
+      popupAvatarForm.reset();
+      clearValidation(popupAvatarForm, validationConfig);
+      onModalClose(popupAvatar);
+    })
     .catch(() => console.log("Не удалось обновить аватар"))
     .finally(() => {
-      buttonToggleLoading(popupAvatarSubmitButton, "loaded");
-      popupAvatarForm.reset();
-      onModalClose(popupAvatar);
+      toggleButtonLoading(popupAvatarSubmitButton, "loaded");
     });
 };
 
 // Обработчик открытия модального окна для редактирования профиля
-const popupEditOpenHandler = () => {
+const handlePopupEditOpen = () => {
   popupEditName.value = profileTitle.textContent;
   popupEditDescription.value = profileDescription.textContent;
   clearValidation(popupEditForm, validationConfig);
@@ -176,7 +176,7 @@ const popupEditOpenHandler = () => {
 };
 
 // Обработчик открытия модального окна изображения карточки
-const popupImageOpenHandler = (evt) => {
+const handlePopupImageOpen = (evt) => {
   const card = evt.target.closest(".card");
   const imageItem = card.querySelector(".card__image");
   const textItem = card.querySelector(".card__title");
@@ -187,7 +187,7 @@ const popupImageOpenHandler = (evt) => {
 };
 
 // Функция вывода состояния загрузки
-const buttonToggleLoading = (button, state) => {
+const toggleButtonLoading = (button, state) => {
   if (state === "loading") {
     button.textContent = "Сохранение...";
   } else {
@@ -216,22 +216,22 @@ Promise.all([cardsPromise, userInfoPromise])
   });
 
 // Добавление слушателей для открытия попапов
-buttonEdit.addEventListener("click", popupEditOpenHandler);
+buttonEdit.addEventListener("click", handlePopupEditOpen);
 buttonNewCard.addEventListener("click", () => onModalOpen(popupNewCard));
 profileImage.addEventListener("click", () => onModalOpen(popupAvatar));
 
 // Добавление слушателей для закрытия попапов
 popupCloseButtons.forEach((button) => {
-  button.addEventListener("click", modalCloseHandler);
+  button.addEventListener("click", handleModalClose);
 });
 popups.forEach((popup) => {
-  popup.addEventListener("mousedown", modalOverlayHandler);
+  popup.addEventListener("mousedown", handleModalOverlay);
 });
 
 // Добавление обработчиков форм
-popupEditForm.addEventListener("submit", editSubmitHandler);
-popupNewCardForm.addEventListener("submit", newCardSubmitHandler);
-popupAvatarForm.addEventListener("submit", avatarSubmitHandler);
+popupEditForm.addEventListener("submit", handleEditFormSubmit);
+popupNewCardForm.addEventListener("submit", handleNewCardFormSubmit);
+popupAvatarForm.addEventListener("submit", handleAvatarFormSubmit);
 
 // Включение валидации
 enableValidation(validationConfig);

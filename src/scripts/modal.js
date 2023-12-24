@@ -1,32 +1,32 @@
 // Функция открытия popup
 const onModalOpen = (modal) => {
   modal.classList.add("popup_is-opened");
-  document.addEventListener("keydown", keyboardHandler);
+  document.addEventListener("keydown", handleKeyboard);
 };
 
 // Функция закрытия popup
 const onModalClose = (modal) => {
-  document.removeEventListener("keydown", keyboardHandler);
+  document.removeEventListener("keydown", handleKeyboard);
   modal.classList.remove("popup_is-opened");
 };
 
 // Обработчик закрытия popup через крестик
-const modalCloseHandler = (evt) => {
+const handleModalClose = (evt) => {
   onModalClose(evt.target.closest(".popup"));
 };
 
 // Обработчик закрытия popup через 'Esc'
-const keyboardHandler = (evt) => {
+const handleKeyboard = (evt) => {
   if (evt.key === "Escape") {
     onModalClose(document.querySelector(".popup_is-opened"));
   }
 };
 
 // Обработчик закрытия popup через оверлей
-const modalOverlayHandler = (evt) => {
+const handleModalOverlay= (evt) => {
   if (evt.target.classList.contains("popup")) {
     onModalClose(evt.target);
   }
 };
 
-export { onModalOpen, onModalClose, modalCloseHandler, modalOverlayHandler };
+export { onModalOpen, onModalClose, handleModalClose, handleModalOverlay };
